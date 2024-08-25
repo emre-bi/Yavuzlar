@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Quiz App</title>
+</head>
+<body>
+    <div class="container">
+        <div class="admin-container" id="admin-container">
+            <button id="editQuestions" onclick="divHandler('admin-container', 'editor-container')">Soruları Düzenle</button>
+            <button id="listQuestions" onclick="divHandler('admin-container', 'question-list-container')">Quizi Başlat</button>
+        </div>
+
+        <div class="question-list-container" id="question-list-container">
+            <h3 id="score"></h3>
+            <h3 id="difficulty-level"></h3>
+            <h3 id="question"></h3>
+            <div id="options"></div>
+        </div>
+
+        <div style="display: none;" id="quiz-result-container">
+            <h1 id="quiz-result-container-score"></h1>
+            <button onclick="divHandler('quiz-result-container', 'admin-container')">Home Page</button>
+        </div>
+
+        <div class="editor-container" id="editor-container">
+            <div id="search-container">
+                <input type="text" id="search-bar" placeholder="Search questions...">
+            </div>
+            <div id="questions-in-editor" style="display: block;"></div>
+            <button id="add-question-button" onclick="divHandler('editor-container', 'add-question')">Soru Ekle</button>
+            <button onclick="divHandler('editor-container', 'question-list-container')">Quiz Başlat</button>
+        </div>
+
+        <div class="edit-question-container" id="edit-question-container">
+            <form class="edit-question-form" id="edit-question-form">
+                <input type="hidden" id="question-id" value="">
+
+                <label for="question-input">Question:</label>
+                <input type="text" id="question-input" name="question" value=""><br><br>
+        
+                <label for="option1-input">Option 1:</label>
+                <input type="text" id="option1-input" name="option1" value=""><br><br>
+        
+                <label for="option2-input">Option 2:</label>
+                <input type="text" id="option2-input" name="option2" value=""><br><br>
+        
+                <label for="option3-input">Option 3:</label>
+                <input type="text" id="option3-input" name="option3" value=""><br><br>
+        
+                <label for="option4-input">Option 4:</label>
+                <input type="text" id="option4-input" name="option4" value=""><br><br>
+        
+                <label for="correct-answer-input">Correct Answer:</label>
+                <input type="text" id="correct-answer-input" name="correctAnswer" value=""><br><br>
+
+                <label for="difficulty-level-input">Difficulty Level:</label>
+                <input type="text" id="difficulty-level-input" name="difficulty-level" value=""><br><br>
+        
+                <button type="button" onclick="editQuestion()">Save</button>
+            </form>
+        </div>
+
+        <div class="add-question" id="add-question">
+            <form class="edit-question-form" id="edit-question-form">
+                <label for="question-input">Question:</label>
+                <input type="text" id="add-question-input" name="question" value=""><br><br>
+        
+                <label for="option1-input">Option 1:</label>
+                <input type="text" id="add-option1-input" name="option1" value=""><br><br>
+        
+                <label for="option2-input">Option 2:</label>
+                <input type="text" id="add-option2-input" name="option2" value=""><br><br>
+        
+                <label for="option3-input">Option 3:</label>
+                <input type="text" id="add-option3-input" name="option3" value=""><br><br>
+        
+                <label for="option4-input">Option 4:</label>
+                <input type="text" id="add-option4-input" name="option4" value=""><br><br>
+        
+                <label for="correct-answer-input">Correct Answer:</label>
+                <input type="text" id="add-correct-answer-input" name="correctAnswer" value=""><br><br>
+
+                <label for="difficulty-level-input">Difficulty Level:</label>
+                <input type="text" id="difficulty-level-input" name="difficulty-level" value=""><br><br>
+        
+                <button type="button" onclick="addQuestion()">Add</button>
+            </form>
+        </div>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
