@@ -31,6 +31,10 @@ if(isset($_SESSION["role"]) && $_SESSION["role"] == "admin"){
         echo "<span>Restaurant Id = <strong>".$coupon["restaurant_id"]."</strong></span>";
         echo "<span> | Coupon Name(Code) => <strong>" . htmlspecialchars($coupon["name"], ENT_QUOTES, "UTF-8") . "</strong></span>";
         echo "<span> | Discount Percentage = <strong>%" . $coupon["discount"] . "</strong></span>";
+        echo '<form method="GET" action="./edit-coupon.php" style="display:inline;">';
+        echo '<input type="hidden" name="id" value="' . $coupon["id"] .'">';
+        echo '<button type="submit" name="editCoupon" style="display:inline;" class="btn btn-success">Edit</button>';
+        echo "</form>";
         echo '<form method="POST" action="./delete-coupon.php" style="display:inline;">';
         echo '<input type="hidden" name="id" value="' . $coupon["id"] .'">';
         echo '<button type="submit" name="deleteCoupon" style="display:inline;" class="btn btn-danger">Delete</button>';
@@ -43,7 +47,7 @@ if(isset($_SESSION["role"]) && $_SESSION["role"] == "admin"){
     </html>
     HTML;
 }else{
-    header("Location: ./admin-panel");
+    header("Location: ./admin-panel.php");
     exit();
 }
 ?>

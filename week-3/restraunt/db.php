@@ -5,6 +5,46 @@ $dbname = 'restaurant';
 $dbusername = 'root';
 $dbpassword = 'root';
 
+function updateBasketNote($newNote, $id){
+    global $host, $dbname, $dbusername, $dbpassword;
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $dbusername, $dbpassword);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    $update_query = "UPDATE basket SET note = :note WHERE user_id = :id";
+    $stmt = $pdo->prepare($update_query);
+    $stmt->bindParam(':id', $id);
+    $stmt->bindParam(':note', $newNote);
+    $stmt->execute();
+}
+
+function getBasketByUserId($user_id){
+    global $host, $dbname, $dbusername, $dbpassword;
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $dbusername, $dbpassword);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    $sql = "SELECT * FROM basket WHERE user_id = :user_id";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':user_id', $user_id);
+    $stmt->execute();
+    $basket = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return $basket;
+}
+
+function editCouponById($id, $name, $discount, $restaurant_id){
+    global $host, $dbname, $dbusername, $dbpassword;
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $dbusername, $dbpassword);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    $update_query = "UPDATE cupon SET name = :name, discount = :discount, restaurant_id = :restaurant_id WHERE id = :id";
+    $stmt = $pdo->prepare($update_query);
+    $stmt->bindParam(':id', $id);
+    $stmt->bindParam(':name', $name);
+    $stmt->bindParam(':discount', $discount);
+    $stmt->bindParam(':restaurant_id', $restaurant_id);
+    $stmt->execute();
+}
 
 function getFoodsForCompany($company_id){
     global $host, $dbname, $dbusername, $dbpassword;
@@ -86,15 +126,29 @@ function commentsForRestaurant($restaurant_id){
     return $comments;
 }
 
-function getCouponByName($coupon_name, $restaurant_id){
+function getCouponById($id){
     global $host, $dbname, $dbusername, $dbpassword;
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $dbusername, $dbpassword);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $sql = "SELECT * FROM cupon WHERE `name` = :coupon_name AND restaurant_id = :rest";
+    $sql = "SELECT * FROM cupon WHERE id = :id";
 
     $stmt = $pdo->prepare($sql);
-    $stmt->bindParam(':coupon_name', $coupon_name);
+    $stmt->bindParam(':id', $id);
+    $stmt->execute();
+    $coupon = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return $coupon;
+}
+
+function getCouponByRestaurantId($restaurant_id){
+    global $host, $dbname, $dbusername, $dbpassword;
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $dbusername, $dbpassword);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    $sql = "SELECT * FROM cupon WHERE restaurant_id = :rest";
+
+    $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':rest', $restaurant_id);
     $stmt->execute();
     $coupon = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -205,7 +259,8 @@ function getBasketItems($user_id){
             f.restaurant_id AS restaurant_id,
             f.name AS food_name,
             f.price AS food_price,
-            f.deleted_at AS food_deleted_at
+            f.deleted_at AS food_deleted_at,
+            f.discount
         FROM basket b
         JOIN food f 
             ON b.food_id = f.id
@@ -234,6 +289,37 @@ function getAllFoods($min, $max){
     }
 
     $stmt = $pdo->prepare($sql);
+    if ($min !== null) {
+        $stmt->bindParam(':min_price', $min, PDO::PARAM_STR);
+    }
+    if ($max !== null) {
+        $stmt->bindParam(':max_price', $max, PDO::PARAM_STR);
+    }
+
+    $stmt->execute();
+    $foods = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    return $foods;
+}
+
+function getAllFoodsForRestaurant($min, $max, $restaurant_id){
+    global $host, $dbname, $dbusername, $dbpassword;
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $dbusername, $dbpassword);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    $sql = "SELECT f.* FROM food f
+    JOIN restaurant r
+    ON f.restaurant_id = r.id
+    WHERE r.id = :rest_id";
+    if ($min !== null) {
+        $sql .= " AND price >= :min_price";
+    }
+    if ($max !== null) {
+        $sql .= " AND price <= :max_price";
+    }
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':rest_id', $restaurant_id, PDO::PARAM_STR);
     if ($min !== null) {
         $stmt->bindParam(':min_price', $min, PDO::PARAM_STR);
     }

@@ -12,21 +12,40 @@ $total_price = 0;
 foreach ($basket_items as $item) {
     $total_price += $item['food_price'] * $item['quantity'];
 }
+
 $user = getUser($_SESSION["username"]);
 $balance = $user["balance"];
 $new_total_price = -1;
 
-if(isset($_GET["coupon"])){
+foreach ($basket_items as $item) {
+    $new_total_price = 0;
+    $new_total_price += ($item['food_price'] * (100 - $item["discount"]) / 100) * $item['quantity'];
+}
+
+if($basket_items){
     $restaurant_id = $basket_items[0]["restaurant_id"];
-    $coupon = getCouponByName($_GET["coupon"], $restaurant_id);
-    
-    if($coupon){
-        echo "<h3>Coupon is used and %". $coupon["discount"] ." discount is applied</h3>";
-        $new_total_price = $total_price * $coupon["discount"] / 100;
-    }else{
-        echo "<h3>Coupon is not Valid</h3>";
+    $coupons = getAllCoupons();
+    $coupon_rest_ids = [];
+        $coupon_rest_ids = array_column($coupons, "restaurant_id");
+        if(in_array($restaurant_id, $coupon_rest_ids)){
+            foreach($coupons as $coupon){
+                if($coupon["restaurant_id"] == $restaurant_id){
+                    $rest_coupon = $coupon;
+                }
+            }
+        }
+    $new_new_total_price = -1;
+    if(isset($rest_coupon)){
+        $new_new_total_price = 0;
+        if(isset($new_total_price)){
+            $new_new_total_price = $new_total_price * (100 - $rest_coupon["discount"]) / 100;
+        }else{
+            $new_new_total_price = $total_price * (100 - $rest_coupon["discount"]) / 100;
+        }
     }
 }
+
+$basket = getBasketByUserId($_SESSION["user_id"]);
 
 ?>
 
@@ -66,7 +85,19 @@ if(isset($_GET["coupon"])){
                             <td><?= htmlspecialchars($item['food_name'], ENT_QUOTES, 'UTF-8') ?></td>
                             <td>$<?= number_format($item['food_price'], 2) ?></td>
                             <td><?= $item['quantity'] ?></td>
-                            <td>$<?= number_format($item['food_price'] * $item['quantity'], 2) ?></td>
+                            
+                            <td><?php if ($new_total_price != -1): ?>
+                <?php if ($new_new_total_price != -1): ?>
+                    <h4>Total: <s>$<?= number_format($total_price, 2) ?></s> => <s>$<?= number_format($new_total_price, 2) ?></s> => $<?= number_format($new_new_total_price, 2) ?></h4>
+                <?php else: ?>
+                    <h4>Total: <s>$<?= number_format($total_price, 2) ?></s> => $<?= number_format($new_total_price, 2) ?></h4>
+                <?php endif; ?>
+            <?php else: ?>
+                <h4>Total: $<?= number_format($total_price, 2) ?></h4>
+            <?php endif; ?></td>
+
+                            
+
                             <td>
                                 <form method="POST" action="update-basket.php">
                                     <input type="hidden" name="basket_id" value="<?= $item['basket_id'] ?>">
@@ -82,8 +113,13 @@ if(isset($_GET["coupon"])){
                     <?php endforeach; ?>
                 </tbody>
             </table>
+
             <?php if ($new_total_price != -1): ?>
-                <h4>Total: <s>$<?= number_format($total_price, 2) ?></s> => $<?= number_format($new_total_price, 2) ?></h4>
+                <?php if ($new_new_total_price != -1): ?>
+                    <h4>Total: <s>$<?= number_format($total_price, 2) ?></s> => <s>$<?= number_format($new_total_price, 2) ?></s> => $<?= number_format($new_new_total_price, 2) ?></h4>
+                <?php else: ?>
+                    <h4>Total: <s>$<?= number_format($total_price, 2) ?></s> => $<?= number_format($new_total_price, 2) ?></h4>
+                <?php endif; ?>
             <?php else: ?>
                 <h4>Total: $<?= number_format($total_price, 2) ?></h4>
             <?php endif; ?>
@@ -91,18 +127,21 @@ if(isset($_GET["coupon"])){
         <?php else: ?>
             <p>Your basket is empty.</p>
         <?php endif; ?>
-        <form action="./checkout.php" method="POST">
-            <?php if($new_total_price != -1): ?>
-                <input type="hidden" name="coupon" value="<?= $_GET["coupon"] ?>">
-            <?php endif; ?>
+        <?php if (isset($item)): ?>
+        <form action="./checkout.php" method="POST" autocomplete="off">
+            <label for="note">Add a Note:</label>
+            <input type="textarea" style='width:20rem; height:2.5rem' name="note" value="<?= $basket["note"] ?>"><br><br>
+            
             <button class="btn btn-success">Checkout</button>
         </form>
+        <?php endif; ?>
+        <?php if (isset($item)): ?>
         <form action="./discover-foods.php" class="mt-3 mb-3" method="GET">
+        <?php else: ?>
+        <form action="./view-restaurants.php" class="mt-3 mb-3" method="GET">
+        <?php endif; ?>
+            <input type="hidden" name="restaurant_id" value="<?= $item['restaurant_id'] ?>">
             <button class="btn btn-secondary">Continue To Discover Foods</button>
-        </form>
-        <form action="" autocomplete="off">
-            <input type="text" name="coupon" placeholder="Coupon Code">
-            <button type="submit" class="btn btn-primary">Apply Coupon</button>
         </form>
     </div>
 </body>

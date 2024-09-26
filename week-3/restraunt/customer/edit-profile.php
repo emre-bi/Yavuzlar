@@ -42,6 +42,17 @@ if(isset($_SESSION["role"]) && $_SESSION["role"] == "customer"){
         $surname = $user["surname"];
         $id = $user["id"];
 
+        $files = scandir("./uploads");
+        foreach($files as $file){
+            if($file == $username.".jpeg"){
+                $image = $username.".jpeg";
+            }elseif($file == $username.".jpg"){
+                $image = $username.".jpg";
+            }elseif($file == $username.".png"){
+                $image = $username.".png";
+            }
+        }
+
         echo <<<HTML
         <!DOCTYPE html>
         <html lang="en">
@@ -57,6 +68,19 @@ if(isset($_SESSION["role"]) && $_SESSION["role"] == "customer"){
                 <form action="./customer-panel.php" method="GET">
                         <button type="submit" class="btn btn-primary mb-3">Go Back</button>
                 </form>
+                <h2>Profile Image</h2>
+        HTML;
+            if(isset($image)){    
+                echo '<img src="./uploads/'.$image.'" alt="profile image" style="height:200px;width:200px;">';
+            }
+        echo <<<HTML
+                <form action="./upload.php" method="POST" enctype="multipart/form-data">
+                    <label for="profileImage">Select Profile Image:</label><br>
+                    <input type="file" name="profileImage" id="profileImage" accept="image/*" required><br><br>
+                    <input type="submit" name="submit" value="Upload">
+                </form>
+                <br><br><br>
+
                 <h1>Edit User Information</h1>
                 <form action="" method="POST" autocomplete="off">
                     <input type="hidden" name="id" value="$id">
@@ -68,7 +92,7 @@ if(isset($_SESSION["role"]) && $_SESSION["role"] == "customer"){
 
                     <button type="submit" name="edit-info" class="btn btn-success mt-3">Save</button>
                 </form>
-                <br>
+                <br><br><br><br>
                 <h1>Edit User Credentials</h1>
                 <form action="" method="POST" autocomplete="off">
                     <input type="hidden" name="id" value="$id">

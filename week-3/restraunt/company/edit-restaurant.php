@@ -10,6 +10,7 @@ if(isset($_SESSION["role"]) && $_SESSION["role"] == "company"){
         $restaurantId = $_POST["id"];
 
         $company_restaurants = getAllRestaurantsForCompany($_SESSION["company_id"]);
+        $restaurantIds = [];
         $restaurantIds = array_column($company_restaurants, 'id');
 
         if (in_array($restaurantId, $restaurantIds)) {
@@ -22,6 +23,7 @@ if(isset($_SESSION["role"]) && $_SESSION["role"] == "company"){
     elseif($_SERVER["REQUEST_METHOD"] == "GET"){
         $restaurantId = $_GET["id"];
         $company_restaurants = getAllRestaurantsForCompany($_SESSION["company_id"]);
+        $restaurantIds = [];
         $restaurantIds = array_column($company_restaurants, 'id');
 
         if (in_array($restaurantId, $restaurantIds)) {

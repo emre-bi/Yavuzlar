@@ -7,7 +7,6 @@ if(isset($_SESSION["role"]) && $_SESSION["role"] == "admin"){
         $restaurants = getAllRestaurants();
         $restaurant_ids = [];
         $restaurant_ids = array_column($restaurants, 'id');
-        $coupons = getAllCoupons();
 
         if(count($restaurants) > 0){
             $name = $_POST["name"];
@@ -15,24 +14,22 @@ if(isset($_SESSION["role"]) && $_SESSION["role"] == "admin"){
             $restaurant_id = $_POST["rest_id"];
             
             if(in_array($restaurant_id, $restaurant_ids)){
-                $coupon_rest_ids = [];
-                $coupon_rest_ids = array_column($coupons, 'restaurant_id');
-                if(!in_array($restaurant_id, $coupon_rest_ids)){
-                    addNewCoupon($name, $discount, $restaurant_id);
-                }
+                $coupon_id = $_POST["id"];
+                editCouponById($coupon_id, $name, $discount, $restaurant_id);
+                
                 header("Location: ./manage-coupon.php");
                 exit();
             }
             else{
-                header("Location: ./add-coupon.php?mess=no_restaurant_id_err");
+                header("Location: ./edit-coupon.php?mess=no_restaurant_id_err");
                 exit();
             }    
         }
         else{
-            header("Location: ./add-coupon.php?mess=no_restaurant_err");
+            header("Location: ./edit-coupon.php?mess=no_restaurant_err");
             exit();
         }
-    }
+}
     elseif($_SERVER["REQUEST_METHOD"] == "GET"){
         echo <<<HTML
         <!DOCTYPE html>
@@ -60,18 +57,27 @@ if(isset($_SESSION["role"]) && $_SESSION["role"] == "admin"){
             }
         }
 
+        $id = $_GET["id"];
+        $coupon = getCouponById($id);
+        $id = $coupon["id"];
+        $name = $coupon["name"];
+        $discount = $coupon["discount"];
+        $rest_id = $coupon["restaurant_id"];
+
         echo <<<HTML
                 <form action="" method="POST" autocomplete="off">
+                    <input type="hidden" name="id" value="$id">
+
                     <label for="name">Coupon Name:</label>
-                    <input type="text" name="name" placeholder="Name"><br><br>
+                    <input type="text" name="name" value="$name"><br><br>
 
                     <label for="desc">Coupon Discount Percentage: (From 1 to 100)</label>
-                    <input type="text" name="discount" placeholder="Discount"><br><br>
+                    <input type="text" name="discount" value="$discount"><br><br>
 
                     <label for="logo">Restaurant Id:</label>
-                    <input type="text" name="rest_id" placeholder="Restaurant Id"><br><br>
+                    <input type="text" name="rest_id" value="$rest_id"><br><br>
 
-                    <button type="submit" class="btn btn-success mt-3">Save New Coupon</button>
+                    <button type="submit" class="btn btn-success mt-3">Save Coupon</button>
                 </form>
             </div>
         HTML;

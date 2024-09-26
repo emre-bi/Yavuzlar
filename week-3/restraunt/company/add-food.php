@@ -12,6 +12,7 @@ if(isset($_SESSION["role"]) && $_SESSION["role"] == "company"){
         $restaurantId = $_POST["id"];
 
         $company_restaurants = getAllRestaurantsForCompany($_SESSION["company_id"]);
+        $restaurantIds = [];
         $restaurantIds = array_column($company_restaurants, 'id');
 
         if (in_array($restaurantId, $restaurantIds)) {
@@ -53,8 +54,8 @@ if(isset($_SESSION["role"]) && $_SESSION["role"] == "company"){
                     <label for="logo">Food Price:</label>
                     <input type="text" name="price" placeholder="price"><br><br>
 
-                    <label for="logo">Food discount:</label>
-                    <input type="text" name="discount" placeholder="discount"><br><br>
+                    <label for="logo">Food discount:(as %)</label>
+                    <input type="text" name="discount" placeholder="30"><br><br>
 
                     <button type="submit" class="btn btn-success mt-3">Save New Food</button>
                 </form>

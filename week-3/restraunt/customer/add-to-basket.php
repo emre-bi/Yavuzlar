@@ -4,6 +4,11 @@ session_start();
 
 if(isset($_SESSION["role"]) && $_SESSION["role"] == "customer"){
     if($_SERVER["REQUEST_METHOD"] == "POST"){
+        if(isset($_POST["note"])){
+            $basket = getBasketByUserId($_SESSION["user_id"]);
+            $newNote = $basket["note"] . " " . $_POST["note"];
+            updateBasketNote($newNote, $_SESSION["user_id"]);
+        }
         $food_id = $_POST["id"];
         $food = getFoodById($food_id);
         $old_basket_items = getBasketItems($_SESSION["user_id"]);

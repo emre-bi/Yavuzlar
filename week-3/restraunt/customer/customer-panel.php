@@ -23,7 +23,7 @@ if(isset($_SESSION["role"]) && $_SESSION["role"] == "customer"){
                 <form action="./manage-money.php" method="GET">
                     <button type="submit" class="btn btn-primary">Manage Money</button>
                 </form>
-                <form action="./discover-foods.php" method="GET">
+                <form action="./view-restaurants.php" method="GET">
                     <button type="submit" class="btn btn-primary">Discover Foods</button>
                 </form>
                 <form action="./basket.php" method="GET">

@@ -13,6 +13,7 @@ if(isset($_SESSION["role"]) && $_SESSION["role"] == "company"){
 
         $restaurantId = getRestaurantIdForFood($food_id);
         $company_restaurants = getAllRestaurantsForCompany($_SESSION["company_id"]);
+        $restaurantIds = [];
         $restaurantIds = array_column($company_restaurants, 'id');
 
 
@@ -27,6 +28,7 @@ if(isset($_SESSION["role"]) && $_SESSION["role"] == "company"){
         $food_id = $_GET["id"];
         $restaurantId = getRestaurantIdForFood($food_id);
         $company_restaurants = getAllRestaurantsForCompany($_SESSION["company_id"]);
+        $restaurantIds = [];
         $restaurantIds = array_column($company_restaurants, 'id');
 
         if (in_array($restaurantId, $restaurantIds)) {
@@ -36,7 +38,7 @@ if(isset($_SESSION["role"]) && $_SESSION["role"] == "company"){
             <html>
             <h1> 403 Forbidden </h1>
             <h2> You can't access to that page! </h2>
-            <form action="./company-panel.php" method="GET">
+            <form action="./manage-food.php" method="GET">
                 <button type="submit">Return Back</button>
             </form>
             </html>
@@ -81,7 +83,7 @@ if(isset($_SESSION["role"]) && $_SESSION["role"] == "company"){
                     <label for="logo">Food Price:</label>
                     <input type="text" name="price" value="$foodPrice"><br><br>
 
-                    <label for="logo">Food Discount:</label>
+                    <label for="logo">Food Discount:(as %)</label>
                     <input type="text" name="discount" value="$foodDiscount"><br><br>
 
                     <button type="submit" class="btn btn-success mt-3">Save Food</button>

@@ -7,6 +7,7 @@ if(isset($_SESSION["role"]) && $_SESSION["role"] == "company"){
         $food_id = $_POST["id"];
         $restaurantId = getRestaurantIdForFood($food_id);
         $company_restaurants = getAllRestaurantsForCompany($_SESSION["company_id"]);
+        $restaurantIds = [];
         $restaurantIds = array_column($company_restaurants, 'id');
 
         if (in_array($restaurantId, $restaurantIds)) {

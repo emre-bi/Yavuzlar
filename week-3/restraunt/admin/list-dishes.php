@@ -39,7 +39,7 @@ if(isset($_SESSION["role"]) && $_SESSION["role"] == "admin"){
         HTML;
 }
 else{
-    header("Location: ./admin-panel");
+    header("Location: ./admin-panel.php");
     exit();
 }
 ?>

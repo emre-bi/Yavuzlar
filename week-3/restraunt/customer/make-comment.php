@@ -19,12 +19,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         header("Location: ./make-comment.php?restaurant_id=".$restaurant_id."&mess=You can Share only one comment for each Restaurant!");
         exit();
     }
-
+    $restaurantIds = [];
     $restaurantIds = array_column($past_orders, 'restaurant_id');
 
     if(in_array($restaurant_id, $restaurantIds)){
         $score = $_POST["score"];
-        if($score > 0 || $score < 6){
+        if($score > 0 || $score < 11){
             $title = $_POST["title"];
             $description = $_POST["description"];
 
@@ -32,7 +32,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             header("Location: ./make-comment.php?mess=Comment Shared&restaurant_id=".$restaurant_id);
             exit();
         }else{
-            header("Location: ./make-comment.php?mess=Score must be between 1 and 5&restaurant_id=".$restaurant_id);
+            header("Location: ./make-comment.php?mess=Score must be between 1 and 10&restaurant_id=".$restaurant_id);
             exit();
         }
     }
@@ -76,7 +76,7 @@ elseif($_SERVER["REQUEST_METHOD"] == "GET"){
             <input type="hidden" name="restaurant_id" value="<?= $restaurant_id ?>">
             <input type="text" name="title" placeholder="Title">
             <input type="text" name="description" placeholder="Description">
-            <input type="text" name="score" placeholder="Score: 1-5" pattern=[1-5] title="Should be between 1 and 5">
+            <input type="text" name="score" placeholder="Score: 1-10" pattern=[1-10] title="Should be between 1 and 10">
             <button class="btn btn-success btn-sm">Share Comment</button>
         </form>
     HTML;

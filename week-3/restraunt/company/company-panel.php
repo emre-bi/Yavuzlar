@@ -23,28 +23,50 @@ if(isset($_SESSION["role"]) && $_SESSION["role"] == "company"){
             <input type="hidden" name="company_id" value="$company_id">
             <button type="submit" class="btn btn-primary">Add a New Restaurant</button>
         </form>
+        <div class="search-container">
+            <input type="text" id="search-bar" class="search-bar" placeholder="Search Restaurants...">
+        </div>
     HTML;
 
     foreach($restaurants as $restaurant){
-        echo "<div class='border p-3 mb-3'>";
-        echo "<img src='". htmlspecialchars($restaurant["image_path"], ENT_QUOTES, "UTF-8") ."' alt='Logo' style='width:30px;height:30px'";
+        echo "<div class='customer-container border p-3 mb-3'>";
+        echo "<img src='" . htmlspecialchars($restaurant["image_path"], ENT_QUOTES, "UTF-8") . "' alt='Logo' style='width:30px;height:30px'>";
         echo "<span>" . htmlspecialchars($restaurant["name"], ENT_QUOTES, "UTF-8") . "</span>";
         echo '<form method="GET" action="./view-restaurant.php" style="display:inline;">';
         echo '<input type="hidden" name="id" value="' . $restaurant["id"] .'">';
-        echo '<button type="submit" name="view-restaurant" style="display:inline;" class="btn btn-secondary">View</button>';
+        echo '<button type="submit" name="list-dishes" style="display:inline;" class="btn btn-secondary">View Restaurant</button>';
         echo "</form>";
         echo '<form method="GET" action="./edit-restaurant.php" style="display:inline;">';
         echo '<input type="hidden" name="id" value="' . $restaurant["id"] .'">';
-        echo '<button type="submit" name="edit-restaurant" style="display:inline;" class="btn btn-success">Edit</button>';
+        echo '<button type="submit" name="editCompany" style="display:inline;" class="btn btn-success">Edit</button>';
         echo "</form>";
         echo '<form method="POST" action="./delete-restaurant.php" style="display:inline;">';
         echo '<input type="hidden" name="id" value="' . $restaurant["id"] .'">';
-        echo '<button type="submit" name="delete-restaurant" style="display:inline;" class="btn btn-danger">Delete</button>';
+        echo '<button type="submit" name="deleteCompany" style="display:inline;" class="btn btn-danger">Delete</button>';
         echo "</form>";
         echo "</div>";
     }
 
     echo <<<HTML
+    <script>
+        function search() {
+            document.getElementById('search-bar').addEventListener('input', function() {
+            let query = this.value.toLowerCase();
+            let customerItems = document.querySelectorAll('.customer-container');
+
+            customerItems.forEach(function(item) {
+                let customer = item.querySelector('span').textContent.toLowerCase();
+        
+                if (customer.includes(query)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            });
+        }
+        search();
+    </script>
     </body>
     </html>
     HTML;
