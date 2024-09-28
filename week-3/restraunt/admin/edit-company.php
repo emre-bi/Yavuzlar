@@ -4,6 +4,7 @@ session_start();
 
 if(isset($_SESSION["role"]) && $_SESSION["role"] == "admin"){
     if($_SERVER["REQUEST_METHOD"] == "POST"){
+        $id = $_POST["id"];
         $name = $_POST["name"];
         $description = $_POST["description"];
         $logo = $_POST["logo"];
