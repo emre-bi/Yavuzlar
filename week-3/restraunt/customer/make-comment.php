@@ -76,7 +76,7 @@ elseif($_SERVER["REQUEST_METHOD"] == "GET"){
             <input type="hidden" name="restaurant_id" value="<?= $restaurant_id ?>">
             <input type="text" name="title" placeholder="Title">
             <input type="text" name="description" placeholder="Description">
-            <input type="text" name="score" placeholder="Score: 1-10" pattern=[1-10] title="Should be between 1 and 10">
+            <input type="text" name="score" placeholder="Score: 1-10">
             <button class="btn btn-success btn-sm">Share Comment</button>
         </form>
     HTML;
