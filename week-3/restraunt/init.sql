@@ -100,7 +100,7 @@ CREATE TABLE comments (
     surname VARCHAR(255) NOT NULL,
     title VARCHAR(255),
     description TEXT,
-    score INT CHECK (score >= 1 AND score <= 5),
+    score INT CHECK (score >= 1 AND score <= 10),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NULL DEFAULT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
