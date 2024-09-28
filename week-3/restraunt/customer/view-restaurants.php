@@ -40,6 +40,7 @@ if(isset($_SESSION["role"]) && $_SESSION["role"] == "customer"){
         echo '<div class="card-body">';
         echo '<h5 class="card-title"><strong>'. htmlspecialchars($restaurant["name"], ENT_QUOTES, "UTF-8") .'</h5>';
         if(in_array($restaurant["id"], $coupon_rest_ids)){
+            $coupon = getCouponByRestaurantId($restaurant["id"]);
             echo '<h6 class="card-subtitle mb-2 text-body-secondary"><strong>Coupon Discount Amount:</strong>%'. $coupon["discount"] .'</h6>';
         }else{
             echo '<h6 class="card-subtitle mb-2 text-body-secondary"><strong>No Coupon</strong></h6>';
