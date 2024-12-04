@@ -8,8 +8,6 @@ import (
 	"time"
 )
 
-var customer_password string = "temp-p4ssw0rd!"
-
 type User struct {
 	Username string
 	Email    string
@@ -17,6 +15,8 @@ type User struct {
 }
 
 var users []User
+
+var currUserUsername string
 
 func write_into_log(attempt bool, input string) {
 	file, _ := os.OpenFile("log.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -50,9 +50,19 @@ func add_customer() {
 	var username string = get_user_input("Username: ")
 	var email string = get_user_input("Email: ")
 	var password string = get_user_input("Password: ")
+	isExist := false
 
-	users = append(users, User{Username: username, Email: email, Password: password})
-	fmt.Println("User Added Succesfully!!!")
+	for _, user := range users {
+		if user.Username == username {
+			fmt.Println("Username is used by another user, Please use a unique username!")
+			isExist = true
+			break
+		}
+	}
+	if !isExist {
+		users = append(users, User{Username: username, Email: email, Password: password})
+		fmt.Println("User Added Succesfully!!!")
+	}
 }
 
 func list_customers() {
@@ -64,7 +74,7 @@ func list_customers() {
 }
 
 func delete_customer() {
-	var username string = get_user_input("Enter Username of the User to Delete: ")
+	var username string = get_user_input("Enter username of the User to Delete: ")
 	for i, user := range users {
 		if user.Username == username {
 			users = append(users[:i], users[i+1:]...)
@@ -76,15 +86,42 @@ func delete_customer() {
 func resetPassword() {
 	var password_reset_input string = get_user_input("Please enter your new password:  ")
 
-	customer_password = password_reset_input
-	fmt.Println("Password reset is completed Successfully, your new password is ", customer_password)
+	for i, user := range users {
+		if user.Username == currUserUsername {
+			users[i].Password = password_reset_input
+			fmt.Println("Password reset is completed Successfully, your new password is ", password_reset_input)
+		}
+	}
+
 }
 
 func showProfile() {
 	fmt.Println("Profile")
-	fmt.Println("----------------")
-	fmt.Println("Username: yavuz\nEmail Address: yavuz@sibervatan.org\nPassword: ", customer_password)
-	fmt.Println("----------------")
+	for _, user := range users {
+		fmt.Println("----------------")
+		fmt.Printf("Username: %s\nEmail Address: %s\nPassword: %s\n", user.Username, user.Email, user.Password)
+		fmt.Println("----------------")
+	}
+}
+
+func userLogin() bool {
+	var user_login_username_input string = get_user_input("Welcome! Please enter your Username: ")
+	var user_login_password_input string = get_user_input("Please enter your Password: ")
+	login_input := user_login_username_input + " : " + user_login_password_input
+
+	for _, user := range users {
+		if user.Username == user_login_username_input {
+			if user.Password == user_login_password_input {
+				currUserUsername = user.Username
+				write_into_log(true, login_input)
+				fmt.Println("Login is successfull")
+				return true
+			}
+		}
+	}
+	write_into_log(false, login_input)
+	fmt.Println("Wrong username or password")
+	return false
 }
 
 // ################## _______________------------------______________  ###########################
@@ -92,32 +129,35 @@ func showProfile() {
 // ################## _______________------------------______________  ###########################
 // ################## _______________------------------______________  ###########################
 func main() {
-	users = append(users, User{Username: "customer", Email: "customer@test.com", Password: "test"})
+	users = append(users, User{Username: "test", Email: "test@test.test", Password: "test"})
 
 	for {
-		var login_input string = get_user_input("Welcome! Please enter:\n    '0' for customer login\n    '1' for admin login\n>>>>>>>>>>>>> ")
-
+		var login_input string = get_user_input("Please enter:\n    '0' for customer login\n    '1' for admin login\n>>>>>>>>>>>>> ")
 		if login_input == "0" || login_input == "1" {
-			write_into_log(true, login_input)
-			if login_input == "0" {
-				fmt.Println("You logged in as Customer!")
-				for {
-					var customer_option_input string = get_user_input("Please enter:\n    'a' to view your profile\n    'b' to change your password\n    'q' to return back to the login\n>>>>>>>>>>>>> ")
 
-					if customer_option_input == "a" || customer_option_input == "b" || customer_option_input == "q" {
-						if customer_option_input == "a" {
-							showProfile()
-						} else if customer_option_input == "b" {
-							resetPassword()
+			if login_input == "0" {
+				fmt.Println("Default Customer Credentials -> test : test")
+				loginSuccessfull := userLogin()
+				if loginSuccessfull {
+					for {
+						var customer_option_input string = get_user_input("Please enter:\n    'a' to view your profile\n    'b' to change your password\n    'q' to return back to the login\n>>>>>>>>>>>>> ")
+
+						if customer_option_input == "a" || customer_option_input == "b" || customer_option_input == "q" {
+							if customer_option_input == "a" {
+								showProfile()
+							} else if customer_option_input == "b" {
+								resetPassword()
+							} else {
+								break
+							}
 						} else {
-							break
+							fmt.Println("Please enter a or b or q")
+							continue
 						}
-					} else {
-						fmt.Println("Please enter a or b or q")
-						continue
 					}
 				}
 			} else {
+				write_into_log(true, login_input)
 				fmt.Println("You logged in as Admin!")
 				for {
 					var admin_option_input string = get_user_input("Please enter:\n    'a' to Add Customer\n    'b' to Delete Customer\n    'c' to View Log Records\n    'd' to List Users\n    'q' to return back to the login\n>>>>>>>>>>>>> ")
