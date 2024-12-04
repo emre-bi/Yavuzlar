@@ -108,16 +108,17 @@ if (isset($_POST["find_config"])){
         <h3>=> You can list all the config files(only with the extensions .conf, .ini or .cfg)</h3>
     </div>
         <?php
-            if($edit_file_name){
+            if(isset($edit_file_name)){
                 echo "<div class='output'>";
                 echo "<form method='POST'>";
-                echo "<h2>Editing $edit_file_name</h2>";
-                echo "<textarea name='new_content' style='display:block; margin:auto' rows='20' cols='100'>$edit_file_content</textarea>";
-                echo "<input type='hidden' name='edit_file_name' value='$edit_file_name'>";
+                echo "<h2>Editing ".htmlspecialchars($edit_file_name)."</h2>";
+                echo "<textarea name='new_content' style='display:block; margin:auto' rows='20' cols='100'>".htmlspecialchars($edit_file_content)."</textarea>";
+                echo "<input type='hidden' name='edit_file_name' value=$edit_file_name>";
                 echo "<button type='submit' name='edit_file_new_content'>Save</button>";
                 echo "</form>";
                 echo "<h3>$edit_file_res</h3>";
                 echo "</div>";
+                die();
             }
 
             echo "<h3>Current Directory Path -> ".$curr_dir."</h3>";
@@ -132,13 +133,13 @@ if (isset($_POST["find_config"])){
             
                         $fileName = implode(' ', array_slice($columns, 8));
                         if(str_starts_with($permissions, "d")){
-                            echo "<span>Directory: $fileName  ||  Permissions: $permissions</span>";
+                            echo "<span>Directory: ".htmlspecialchars($fileName)."  ||  Permissions: $permissions</span>";
                             echo "<form><input type='hidden' name='curr_dir' value='".trim($curr_dir)."/".trim($fileName)."'><button>Visit Directory</button></form>";
                         }else{
-                            echo "<span>File: $fileName  ||  Permissions: $permissions</span><br>";
-                            echo "<form><input type='hidden' name='curr_dir' value='".trim($curr_dir)."'><input type='hidden' name='delete_file' value='".trim($curr_dir)."/".trim($fileName)."'><button>Delete File</button></form>";
-                            echo "<form><input type='hidden' name='curr_dir' value='".trim($curr_dir)."'><input type='hidden' name='edit_file' value='".trim($curr_dir)."/".trim($fileName)."'><button>Edit File</button></form>";
-                            echo "<form method='POST'><input type='hidden' name='download_file_name' value='".trim($curr_dir)."/".trim($fileName)."'><button name='download_file'>Download File</button></form>";
+                            echo "<span>File: ".htmlspecialchars($fileName)."  ||  Permissions: $permissions</span><br>";
+                            echo "<form><input type='hidden' name='curr_dir' value='".trim(htmlspecialchars($curr_dir))."'><input type='hidden' name='delete_file' value='".trim(htmlspecialchars($curr_dir))."/".trim(htmlspecialchars($fileName))."'><button>Delete File</button></form>";
+                            echo "<form><input type='hidden' name='curr_dir' value='".trim(htmlspecialchars($curr_dir))."'><input type='hidden' name='edit_file' value='".trim(htmlspecialchars($curr_dir))."/".trim(htmlspecialchars($fileName))."'><button>Edit File</button></form>";
+                            echo "<form method='POST'><input type='hidden' name='download_file_name' value='".trim(htmlspecialchars($curr_dir))."/".trim(htmlspecialchars($fileName))."'><button name='download_file'>Download File</button></form>";
                         }
                     }
                 }
